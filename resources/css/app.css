@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './notifications.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -8,4 +9,30 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Dark mode checkbox visibility improvement */
+[data-bs-theme="dark"] .form-check-input:not(:checked) {
+    background-color: var(--tblr-gray-700);
+    border-color: var(--tblr-gray-500);
+}
+
+[data-bs-theme="dark"] .form-check-input:not(:checked):hover {
+    background-color: var(--tblr-gray-600);
+    border-color: var(--tblr-gray-400);
+}
+
+[data-bs-theme="dark"] .form-check-input:focus {
+    border-color: var(--tblr-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--tblr-primary-rgb), 0.25);
+}
+
+[data-bs-theme="dark"] .form-check-input:checked {
+    background-color: var(--tblr-primary);
+    border-color: var(--tblr-primary);
+}
+
+/* Dark mode modal white border */
+[data-bs-theme="dark"] .modal-content {
+    border: 1px solid #ffffff;
 }

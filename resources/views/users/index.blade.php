@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Gestione Utenti')
+@section('page-title', 'Gestione Utenti')
 
 @section('content')
 <div class="row row-cards">
@@ -83,7 +84,6 @@
   <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
     <div class="modal-content">
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      <div class="modal-status bg-danger"></div>
       <div class="modal-body text-center py-4">
         <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -111,13 +111,12 @@
 </div>
 
 <!-- Toast Container -->
-<div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
-  <div id="toastContainer"></div>
-</div>
+<div id="toast-container"></div>
 @endsection
 
 @push('styles')
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="{{ asset('css/notifications.css') }}">
 <style>
   .dataTables_wrapper .dataTables_filter,
   .dataTables_wrapper .dataTables_length {
@@ -391,34 +390,46 @@
   
   // Show toast notification
   function showToast(type, message) {
-    const toastId = 'toast-' + Date.now();
-    const bgClass = type === 'success' ? 'bg-success' : 'bg-danger';
-    const icon = type === 'success' ? 
-      '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10"/>' :
-      '<path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
-    
-    const toastHtml = `
-      <div id="${toastId}" class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-          <div class="toast-body d-flex align-items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              ${icon}
-            </svg>
-            ${message}
-          </div>
-          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
+    const toastContainer = document.getElementById('toast-container');
+    if (!toastContainer) return;
+
+    // Map type to correct class
+    const typeMap = {
+      'success': 'success',
+      'error': 'error',
+      'danger': 'error'
+    };
+    const toastType = typeMap[type] || 'info';
+
+    const toast = document.createElement('div');
+    toast.className = `toast-notification toast-${toastType}`;
+    toast.innerHTML = `
+      <div class="toast-header">
+        <strong>${type === 'success' ? 'Successo' : 'Errore'}</strong>
+        <button class="toast-close" onclick="this.parentElement.parentElement.remove()">×</button>
+      </div>
+      <div class="toast-body">
+        ${escapeHtml(message)}
       </div>
     `;
-    
-    $('#toastContainer').append(toastHtml);
-    const toast = new bootstrap.Toast(document.getElementById(toastId));
-    toast.show();
-    
-    // Remove toast from DOM after it's hidden
-    document.getElementById(toastId).addEventListener('hidden.bs.toast', function() {
-      this.remove();
-    });
+
+    toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 100);
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => toast.remove(), 300);
+    }, 5000);
+  }
+  
+  // Escape HTML helper
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 </script>
 @endpush

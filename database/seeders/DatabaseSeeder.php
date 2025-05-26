@@ -16,13 +16,5 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UsersTableSeeder::class,
         ]);
-        
-        // Crea anche un utente di test standard se non esiste già
-        if (!User::where('email', 'test@example.com')->exists()) {
-            User::factory()->create([
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-            ]);
-        }
     }
 }

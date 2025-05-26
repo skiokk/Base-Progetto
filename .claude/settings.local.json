@@ -14,7 +14,13 @@
       "Bash(chown:*)",
       "Bash(wget:*)",
       "Bash(rm:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(composer:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(sqlite3:*)",
+      "Bash(sudo kill:*)",
+      "Bash(pkill:*)"
     ],
     "deny": []
   }
