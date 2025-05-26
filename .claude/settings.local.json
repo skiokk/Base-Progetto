@@ -22,7 +22,8 @@
       "Bash(sudo kill:*)",
       "Bash(pkill:*)",
       "Bash(git rm:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }

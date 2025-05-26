@@ -141,8 +141,8 @@ php artisan view:cache
 
 ## Note
 
-- La cartella `Theme/` contiene i sorgenti del framework Tabler ma non è necessaria in produzione
-- I file `menu-digitale-*.md` sono documentazione interna e non vengono versionati
+- Gli asset Tabler sono già compilati nella cartella `public/dist/`
+- In produzione non sono necessari file aggiuntivi oltre al progetto Laravel
 
 ## Licenza
 

@@ -212,6 +212,6 @@ REVERB_PORT=443
 
 - Il sistema usa broadcasting privati per sicurezza
 - Ogni utente ha il proprio canale: `notifications.{userId}`
-- Le notifiche sono soft-delete per mantenere lo storico
+- Le notifiche vengono eliminate definitivamente (hard-delete)
 - Il badge contatore si aggiorna automaticamente
 - Supporta markdown nel contenuto delle notifiche
