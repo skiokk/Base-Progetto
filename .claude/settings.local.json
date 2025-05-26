@@ -20,7 +20,9 @@
       "Bash(npm run build:*)",
       "Bash(sqlite3:*)",
       "Bash(sudo kill:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(git rm:*)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

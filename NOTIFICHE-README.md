@@ -1,83 +1,217 @@
-# Sistema di Notifiche Push Self-Hosted
+# Sistema di Notifiche Real-time con Laravel Reverb
 
-Questo progetto utilizza **Laravel Reverb** per le notifiche push real-time, una soluzione completamente self-hosted che non richiede servizi esterni.
+Questo progetto implementa un sistema completo di notifiche push real-time utilizzando **Laravel Reverb**, una soluzione WebSocket self-hosted che non richiede servizi esterni.
 
-## Come avviare il sistema
+## Caratteristiche Principali
 
-### 1. Avviare il server WebSocket Reverb
+- **🚀 Real-time**: Notifiche istantanee tramite WebSocket
+- **💾 Persistenti**: Salvate nel database per storico e consultazione
+- **👥 Multi-utente**: Invio a singoli, gruppi o broadcast
+- **🎨 UI Moderna**: Toast notifications con Tabler UI
+- **🔔 Browser Notifications**: Supporto notifiche native del browser
+- **📊 Dashboard**: Gestione completa delle notifiche
+- **🔒 Sicuro**: Canali privati per utente con autenticazione
 
-In un terminale separato, esegui:
+## Installazione e Configurazione
 
+### 1. Configurazione Environment
+
+Le variabili d'ambiente sono già configurate in `.env`:
+
+```env
+BROADCAST_CONNECTION=reverb
+REVERB_APP_ID=123456
+REVERB_APP_KEY=laravelreverb
+REVERB_APP_SECRET=secret
+REVERB_HOST=localhost
+REVERB_PORT=8080
+REVERB_SCHEME=http
+```
+
+### 2. Avvio del Sistema
+
+#### Metodo 1: Script automatico
 ```bash
 ./start-reverb.sh
 ```
 
-O manualmente:
-
+#### Metodo 2: Comando manuale
 ```bash
 php artisan reverb:start --debug
 ```
 
 Il server WebSocket sarà disponibile su `http://localhost:8080`
 
-### 2. Testare le notifiche
+### 3. Verifica Funzionamento
 
-1. Accedi all'applicazione
-2. Vai su **Test Notifiche** nel menu laterale
-3. Seleziona i destinatari:
-   - **Solo me stesso**: invia a te stesso
-   - **Tutti gli utenti**: invia a tutti gli utenti registrati
-   - **Utenti specifici**: seleziona dalla lista
-4. Compila il form e clicca "Invia Notifica"
+1. Accedi all'applicazione con le credenziali di test
+2. Apri la console del browser (F12)
+3. Dovresti vedere: "Echo connected successfully"
+4. Vai alla pagina "Test Notifiche" per inviare una notifica di prova
 
-### Caratteristiche
+## Utilizzo
 
-- **Real-time**: Le notifiche appaiono istantaneamente grazie a WebSocket
-- **Persistenza**: Salvate nel database per consultazione futura
-- **Multi-destinatario**: Invia a singoli utenti, gruppi o tutti
-- **Toast notifications**: Popup eleganti che appaiono in alto a destra
-- **Browser notifications**: Notifiche native del browser (richiede permesso)
-- **Badge contatore**: Numero di notifiche non lette sulla campanella
+### Invio Notifiche via UI
 
-### Configurazione
+1. **Menu laterale** → **Test Notifiche**
+2. Seleziona i destinatari:
+   - Solo a me stesso
+   - Tutti gli utenti
+   - Utenti specifici (selezione multipla)
+3. Inserisci titolo e messaggio
+4. Clicca "Invia Notifica"
 
-Il sistema è già configurato e pronto all'uso. Le impostazioni principali sono in:
+### Invio Notifiche via Codice
 
-- `.env`: Configurazione Reverb (REVERB_*)
-- `config/reverb.php`: Configurazione del server WebSocket
-- `config/broadcasting.php`: Configurazione broadcasting
+```php
+// Notifica singolo utente
+$user->notify(new GeneralNotification(
+    'Titolo notifica',
+    'Messaggio della notifica'
+));
 
-### Troubleshooting
-
-**Le notifiche non arrivano in tempo reale?**
-- Assicurati che il server Reverb sia in esecuzione
-- Controlla la console del browser per errori WebSocket
-- Verifica che la porta 8080 non sia bloccata
-
-**Errore di connessione WebSocket?**
-- Se usi HTTPS, potrebbe essere necessario configurare SSL per Reverb
-- Controlla le impostazioni del firewall
-
-### Architettura
-
-1. **Backend**: Laravel con Reverb WebSocket server
-2. **Frontend**: Laravel Echo + Pusher JS (compatibile con Reverb)
-3. **Database**: SQLite per memorizzare le notifiche
-4. **Broadcasting**: Canali privati per utente per sicurezza
+// Notifica multipla
+Notification::send($users, new GeneralNotification(
+    'Titolo',
+    'Messaggio'
+));
+```
 
 ### API Endpoints
 
-- `GET /notifications` - Lista notifiche dell'utente
-- `POST /notifications/send` - Invia a singolo utente
-- `POST /notifications/send-to-all` - Invia a tutti
-- `POST /notifications/send-to-users` - Invia a utenti multipli
-- `POST /notifications/mark-read/{id}` - Segna come letta
-- `POST /notifications/mark-all-read` - Segna tutte come lette
+| Metodo | Endpoint | Descrizione |
+|--------|----------|-------------|
+| GET | `/notifications` | Lista notifiche utente corrente |
+| POST | `/notifications/send` | Invia a utente singolo |
+| POST | `/notifications/send-to-all` | Broadcast a tutti |
+| POST | `/notifications/send-to-users` | Invia a utenti multipli |
+| POST | `/notifications/mark-read/{id}` | Segna come letta |
+| POST | `/notifications/mark-all-read` | Segna tutte come lette |
+| GET | `/notifications/test` | Pagina test notifiche |
 
-### Sviluppo
+## Architettura Tecnica
 
-Per aggiungere nuovi tipi di notifiche:
+### Stack Tecnologico
 
-1. Crea una nuova classe notifica: `php artisan make:notification NomeNotifica`
-2. Implementa i metodi `via()`, `toArray()` e `toBroadcast()`
-3. Usa la notifica: `$user->notify(new NomeNotifica($dati))`
+- **Backend**: Laravel 11 + Reverb WebSocket Server
+- **Frontend**: Laravel Echo + Pusher JS (compatibile Reverb)
+- **Database**: SQLite (configurabile per MySQL/PostgreSQL)
+- **UI**: Tabler CSS Framework
+
+### Flusso Dati
+
+1. **Invio**: Controller → Notification → Database + Broadcast
+2. **Ricezione**: WebSocket → Laravel Echo → JavaScript → UI Update
+3. **Persistenza**: Tutte le notifiche vengono salvate in `notifications` table
+
+### Struttura File
+
+```
+app/
+├── Notifications/
+│   └── GeneralNotification.php    # Classe notifica base
+├── Http/Controllers/
+│   └── NotificationController.php  # Gestione notifiche
+└── Models/
+    └── Notification.php           # Modello Eloquent
+
+resources/
+├── js/
+│   └── notifications.js           # Client-side logic
+├── css/
+│   └── notifications.css          # Stili custom
+└── views/notifications/
+    ├── index.blade.php           # Dashboard notifiche
+    └── test.blade.php            # Pagina test
+
+config/
+├── broadcasting.php              # Config canali
+└── reverb.php                   # Config WebSocket
+```
+
+## Troubleshooting
+
+### Le notifiche non arrivano?
+
+1. **Verifica Reverb sia attivo**:
+   ```bash
+   ps aux | grep reverb
+   ```
+
+2. **Controlla i log**:
+   ```bash
+   tail -f storage/logs/reverb.log
+   ```
+
+3. **Console browser**: Cerca errori WebSocket
+
+### Errori comuni
+
+- **"WebSocket connection failed"**: Porta 8080 bloccata o Reverb non attivo
+- **"Broadcasting auth failed"**: Utente non autenticato
+- **"No notifications received"**: Verifica i permessi del canale
+
+### Debug Mode
+
+Per debug dettagliato:
+```bash
+php artisan reverb:start --debug --port=8080
+```
+
+## Produzione
+
+### Deployment con Supervisor
+
+Crea `/etc/supervisor/conf.d/reverb.conf`:
+
+```ini
+[program:reverb]
+process_name=%(program_name)s_%(process_num)02d
+command=php /path/to/artisan reverb:start --port=8080
+autostart=true
+autorestart=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/path/to/storage/logs/reverb.log
+```
+
+### Configurazione Nginx
+
+Per WebSocket proxy:
+
+```nginx
+location /app {
+    proxy_pass http://127.0.0.1:8080;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+}
+```
+
+### SSL/HTTPS
+
+Per HTTPS, modifica in `.env`:
+```env
+REVERB_SCHEME=https
+REVERB_PORT=443
+```
+
+## Estensioni Future
+
+- [ ] Notifiche email oltre che real-time
+- [ ] Notifiche SMS
+- [ ] Scheduling notifiche
+- [ ] Template notifiche personalizzabili
+- [ ] Analytics e statistiche
+- [ ] Notifiche con azioni (bottoni)
+- [ ] Raggruppamento notifiche simili
+
+## Note Tecniche
+
+- Il sistema usa broadcasting privati per sicurezza
+- Ogni utente ha il proprio canale: `notifications.{userId}`
+- Le notifiche sono soft-delete per mantenere lo storico
+- Il badge contatore si aggiorna automaticamente
+- Supporta markdown nel contenuto delle notifiche

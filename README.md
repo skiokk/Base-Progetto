@@ -1,61 +1,149 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Base Progetto Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Questo è un progetto base Laravel con sistema di autenticazione e notifiche real-time già configurato.
 
-## About Laravel
+## Caratteristiche
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Laravel 11** - L'ultima versione del framework PHP
+- **Sistema di Autenticazione** - Login/Logout già implementato
+- **Notifiche Real-time** - Sistema di notifiche tramite Laravel Reverb (WebSocket)
+- **UI con Tabler** - Framework CSS moderno e responsive
+- **Database SQLite** - Per sviluppo rapido (configurabile con MySQL/PostgreSQL)
+- **Gestione Utenti** - CRUD base per la gestione utenti
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requisiti
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- SQLite (o altro database supportato)
 
-## Learning Laravel
+## Installazione
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Clona il repository:
+```bash
+git clone https://github.com/skiokk/Base-Progetto.git
+cd Base-Progetto
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. Installa le dipendenze PHP:
+```bash
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Installa le dipendenze JavaScript:
+```bash
+npm install
+```
 
-## Laravel Sponsors
+4. Copia il file di configurazione:
+```bash
+cp .env.example .env
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. Genera la chiave dell'applicazione:
+```bash
+php artisan key:generate
+```
 
-### Premium Partners
+6. Esegui le migrazioni e i seeder:
+```bash
+php artisan migrate --seed
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+7. Compila gli asset:
+```bash
+npm run build
+```
 
-## Contributing
+## Avvio dell'Applicazione
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Per avviare l'applicazione in sviluppo, esegui questi comandi in terminali separati:
 
-## Code of Conduct
+1. Server Laravel:
+```bash
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+2. Server WebSocket (Reverb) per le notifiche:
+```bash
+php artisan reverb:start
+```
 
-## Security Vulnerabilities
+3. Compilazione asset in watch mode (opzionale):
+```bash
+npm run dev
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Credenziali di Accesso
 
-## License
+L'applicazione viene pre-popolata con un utente amministratore:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Email**: admin@example.com
+- **Password**: password
+
+## Struttura del Progetto
+
+```
+app/
+├── Http/Controllers/       # Controller dell'applicazione
+├── Models/                 # Modelli Eloquent
+├── Notifications/          # Classi per le notifiche
+└── Providers/             # Service Provider
+
+resources/
+├── css/                   # File CSS
+├── js/                    # File JavaScript
+└── views/                 # Template Blade
+
+database/
+├── migrations/            # Migrazioni database
+└── seeders/              # Seeder per dati di test
+
+routes/
+├── web.php               # Route web
+└── channels.php          # Canali broadcast
+```
+
+## Funzionalità Principali
+
+### Sistema di Autenticazione
+- Login/Logout
+- Protezione route con middleware
+- Gestione sessioni
+
+### Sistema di Notifiche
+- Notifiche real-time via WebSocket
+- API per inviare notifiche programmaticamente
+- Dashboard per visualizzare le notifiche
+
+### Gestione Utenti
+- Lista utenti
+- Creazione/modifica/eliminazione utenti
+- Ruoli e permessi (da implementare)
+
+## Deployment
+
+Per il deployment in produzione:
+
+1. Configura le variabili d'ambiente nel file `.env`
+2. Esegui le ottimizzazioni:
+```bash
+composer install --no-dev
+npm run build
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+3. Configura il web server (Nginx/Apache)
+4. Configura il processo Reverb come servizio
+
+## Note
+
+- La cartella `Theme/` contiene i sorgenti del framework Tabler ma non è necessaria in produzione
+- I file `menu-digitale-*.md` sono documentazione interna e non vengono versionati
+
+## Licenza
+
+Questo progetto è basato su Laravel, che è un software open-source con licenza [MIT](https://opensource.org/licenses/MIT).
